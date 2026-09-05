@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#FFD428" />
+<title>아파트랩 V0.7.3</title>
+<style>
+:root{--yellow:#FFD428;--ink:#262626;--muted:#8b8b8b;--line:#ececec;--bg:#fff;--soft:#fff8dc;--green:#13a36d;--red:#e84f4f}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;background:#f5f5f5;color:var(--ink)}button,input{font:inherit}.app{max-width:430px;min-height:100vh;margin:0 auto;background:var(--bg);padding-bottom:88px;box-shadow:0 0 24px rgba(0,0,0,.04)}
+.header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 8px}.brand{display:flex;align-items:center;gap:10px}.brand img{width:44px;height:44px;border-radius:12px;object-fit:cover}.brand-txt{font-weight:900;font-size:23px;letter-spacing:-1px}.brand-sub{font-size:10px;letter-spacing:2px;color:#777;margin-top:1px}.gear{border:0;background:#fff7d5;border-radius:12px;width:42px;height:42px;font-size:20px;cursor:pointer}
+.status{margin:8px 20px 0;padding:10px 12px;border-radius:13px;background:#f7f7f7;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}.status b{font-size:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#bbb;margin-right:6px}.status.ready .dot{background:var(--green)}.status.syncing .dot{background:#e6a700}.status.error .dot{background:var(--red)}
+.search-wrap{position:relative;margin:12px 20px 16px}.search{border:1px solid #e7e7e7;border-radius:17px;padding:13px 14px;display:flex;align-items:center;gap:9px;box-shadow:0 3px 12px rgba(0,0,0,.03);background:#fff}.search:focus-within{border-color:#e3b400;box-shadow:0 0 0 3px rgba(255,212,40,.18)}.search input{border:0;outline:0;flex:1;font-size:15px;min-width:0;background:transparent}.search input::placeholder{color:#aaa}.search-btn{border:0;border-radius:11px;background:var(--yellow);padding:8px 11px;font-weight:900;cursor:pointer}.results{display:none;position:absolute;z-index:20;left:0;right:0;top:58px;background:#fff;border:1px solid #eee;border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.12);overflow:hidden;max-height:390px;overflow-y:auto}.results.show{display:block}.result-item{padding:13px 15px;border-bottom:1px solid #f1f1f1;cursor:pointer}.result-item:last-child{border-bottom:0}.result-item:hover,.result-item:active{background:#fff9df}.result-name{font-size:14px;font-weight:900}.result-meta{font-size:11px;color:#888;margin-top:3px}.empty{padding:18px 14px;color:#777;font-size:13px;text-align:center;line-height:1.55}.linkbtn{border:0;background:none;color:#b08400;text-decoration:underline;font-weight:800;cursor:pointer}
+.shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 18px 20px}.shortcut{text-align:center;font-size:13px}.ic{width:54px;height:54px;border-radius:16px;background:#fff7d5;margin:0 auto 8px;display:grid;place-items:center;font-size:25px}.section{padding:0 20px 18px}.title{font-size:19px;font-weight:900;margin:0 0 12px}.insight{background:linear-gradient(135deg,#fff3a6,#ffd52a);border-radius:20px;padding:17px 18px;box-shadow:0 7px 18px rgba(255,200,0,.18)}.insight-top{display:flex;justify-content:space-between;align-items:center}.insight-label{font-weight:800;font-size:15px}.badge{background:#111;color:#fff;border-radius:999px;padding:5px 9px;font-size:11px}.insight h2{font-size:22px;margin:16px 0 4px}.price{font-size:28px;font-weight:950;letter-spacing:-1px}.updated{color:#8a7626;font-size:11px;margin-top:12px}.primary{border:0;background:#111;color:#fff;border-radius:13px;padding:11px 14px;font-weight:900;cursor:pointer}.yellow{background:var(--yellow);color:#222}.outline{background:#fff;border:1px solid #ddd;color:#333}.small{padding:8px 10px;font-size:12px}.watch-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.more{font-size:13px;color:#888}.apt{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.thumb{width:56px;height:56px;background:#f3f3f3;border-radius:12px;display:grid;place-items:center;font-size:28px}.name{font-weight:850;font-size:15px}.meta{font-size:12px;color:#888;margin-top:4px}.pill{border-radius:999px;background:#f3f3f3;padding:5px 8px;font-size:10px;color:#777}.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(430px,100%);height:72px;background:rgba(255,255,255,.97);border-top:1px solid #e8e8e8;display:grid;grid-template-columns:repeat(4,1fr);padding:7px 8px env(safe-area-inset-bottom);backdrop-filter:blur(12px);z-index:10}.nav div{text-align:center;font-size:11px;color:#777}.nav b{display:block;font-size:23px;line-height:28px}.nav .active{color:#ca9a00;font-weight:800}
+.detail{display:none;max-width:430px;min-height:100vh;margin:0 auto;background:#fff;padding-bottom:90px}.detail.show{display:block}.home.hide{display:none}.detail-head{padding:14px 18px 8px;display:flex;align-items:center;gap:12px}.back{font-size:28px;cursor:pointer}.detail-name{font-size:21px;font-weight:900}.detail-loc{font-size:12px;color:#888;margin-top:2px}.hero{margin:8px 18px 14px;background:#fff7d5;border-radius:20px;padding:18px}.hero-row{display:flex;justify-content:space-between;gap:10px}.hero .big{font-size:24px;font-weight:950}.source{width:72px;height:72px;border-radius:50%;background:#ffd428;display:grid;place-items:center;text-align:center;font-weight:950;font-size:12px}.tabs{display:flex;overflow:auto;border-bottom:1px solid #eee;padding:0 14px;gap:18px;white-space:nowrap}.tab{padding:13px 0;font-size:13px;color:#777}.tab.on{font-weight:900;color:#222;border-bottom:3px solid #ffd428}.panel{padding:18px}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.fact{background:#f8f8f8;border-radius:14px;padding:12px 8px;text-align:center;min-height:64px}.fact b{display:block;font-size:14px;word-break:keep-all}.fact span{font-size:11px;color:#888}.info-card{margin-top:14px;border:1px solid #eee;border-radius:18px;padding:15px}.info-row{display:grid;grid-template-columns:84px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid #f2f2f2;font-size:13px}.info-row:last-child{border-bottom:0}.info-row span{color:#888}.info-row b{word-break:break-all}.api-note{margin:0 18px 14px;padding:10px 12px;border-radius:12px;background:#f7f7f7;color:#666;font-size:11px;line-height:1.55}
+.modal{display:none;position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.42);align-items:flex-end;justify-content:center}.modal.show{display:flex}.sheet{width:min(430px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:20px}.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.sheet h2{margin:0;font-size:21px}.close{border:0;background:#f3f3f3;width:36px;height:36px;border-radius:50%;font-size:20px}.field{margin:14px 0}.field label{display:block;font-size:12px;font-weight:900;margin-bottom:7px}.field input{width:100%;border:1px solid #ddd;border-radius:12px;padding:12px;outline:0}.help{font-size:11px;color:#777;line-height:1.55}.progress{height:10px;background:#eee;border-radius:999px;overflow:hidden;margin:12px 0}.bar{height:100%;width:0;background:var(--yellow);transition:width .2s}.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1}.danger{color:#c94141}.toast{position:fixed;z-index:200;left:50%;transform:translateX(-50%);bottom:90px;background:#222;color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;display:none;max-width:90%;text-align:center}.toast.show{display:block}
+
+.trade-summary{background:#fff7d5;border-radius:18px;padding:16px;margin:12px 0}
+.trade-summary .latest{font-size:25px;font-weight:950;margin-top:4px}
+.trade-summary .sub{font-size:12px;color:#777;margin-top:5px}
+.trade-card{border:1px solid #eee;border-radius:16px;padding:14px;margin:9px 0}
+.trade-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.trade-price{font-size:18px;font-weight:950}.trade-date{font-size:12px;color:#777}
+.trade-meta{font-size:12px;color:#666;margin-top:7px;line-height:1.55}
+.trade-badge{display:inline-block;background:#fff7d5;border-radius:8px;padding:3px 7px;font-size:11px;font-weight:800;margin-right:4px}
+
+.map-screen{display:none;max-width:430px;min-height:100vh;margin:0 auto;background:#fff;padding-bottom:90px}.map-screen.show{display:block}.map-head{height:62px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee}.map-head h2{font-size:20px;margin:0}.map-wrap{position:relative;height:calc(100vh - 134px);min-height:520px;background:#f2f4f5}.map-canvas{width:100%;height:100%}.map-message{position:absolute;z-index:2;left:18px;right:18px;top:18px;background:rgba(255,255,255,.96);border-radius:16px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.12);font-size:12px;line-height:1.55}.map-message b{display:block;font-size:15px;margin-bottom:4px}.map-location-btn{position:absolute;z-index:3;right:16px;bottom:20px;border:0;background:#fff;border-radius:50%;width:48px;height:48px;box-shadow:0 4px 18px rgba(0,0,0,.18);font-size:22px}.map-detail-btn{width:100%;margin-top:12px}.nav div{cursor:pointer}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#FFD21F">
+</head>
+<body>
+<main class="app home" id="home">
+<header class="header"><div class="brand"><div style="width:44px;height:44px;border-radius:12px;background:#FFD428;display:grid;place-items:center;font-size:25px">🏢</div><div><div class="brand-txt">아파트랩</div><div class="brand-sub">APT LAB · V0.8</div></div></div><button class="gear" onclick="openSettings()" aria-label="API 설정">⚙</button></header>
+<div class="status" id="apiStatus"><div><span class="dot"></span><b id="statusText">실제 아파트 DB 설정이 필요해요</b></div><button class="linkbtn" onclick="openSettings()">설정</button></div>
+<div class="search-wrap"><form class="search" id="searchForm"><span>⌕</span><input id="searchInput" autocomplete="off" placeholder="실제 아파트명을 검색해보세요" aria-label="아파트 검색"><button class="search-btn" type="submit">검색</button></form><div class="results" id="searchResults"></div></div>
+<div class="shortcuts"><div class="shortcut"><div class="ic">▥</div>시세</div><div class="shortcut"><div class="ic">⌄</div>저평가 찾기</div><div class="shortcut"><div class="ic">▤</div>학군</div><div class="shortcut"><div class="ic">⌁</div>개발호재</div></div>
+<section class="section"><h3 class="title">실제 데이터 연결</h3><div class="insight"><div class="insight-top"><div class="insight-label">국토교통부 공동주택 API</div><span class="badge">LIVE</span></div><h2 id="syncHeadline">전국 단지 DB를 받아주세요</h2><div class="price" id="syncCount">0개 단지</div><div class="updated" id="syncUpdated">API 키는 이 기기의 브라우저에만 저장됩니다.</div><div style="margin-top:14px"><button class="primary" id="syncMainBtn" onclick="openSettings()">API 설정하기</button></div></div></section>
+<section class="section"><div class="watch-head"><h3 class="title" style="margin:0">V0.7.3에서 되는 것</h3></div><div class="apt"><div class="thumb">🔎</div><div><div class="name">전국 실제 단지명 검색</div><div class="meta">브랜드 별칭 검색 지원 · K-apt 단지 목록 API 기반</div></div><div class="pill">실데이터</div></div><div class="apt"><div class="thumb">🏢</div><div><div class="name">단지 기본정보 조회</div><div class="meta">세대수 · 동수 · 사용승인일 · 난방 등</div></div><div class="pill">실데이터</div></div><div class="apt"><div class="thumb">₩</div><div><div class="name">실거래가 · 시세</div><div class="meta">다음 단계에서 연결 예정</div></div><div class="pill">NEXT</div></div></section>
+</main>
+<section class="detail" id="detail"><div class="detail-head"><div class="back" onclick="goHome()">‹</div><div><div class="detail-name" id="detailName">단지명</div><div class="detail-loc" id="detailLoc">주소</div></div></div><div class="hero"><div class="hero-row"><div><div style="font-size:12px;color:#777">국토교통부 공동주택관리정보</div><div class="big" id="detailHeadline">기본정보 조회 중...</div><div id="detailCode" style="font-size:12px;color:#777;margin-top:6px"></div></div><div class="source">공공<br>데이터</div></div></div><div class="api-note">V0.8은 공동주택 기본정보·매매 실거래가와 네이버지도 연결을 지원합니다. 시세 탭에서 선택한 단지의 최근 실거래 내역을 확인할 수 있습니다.</div><div class="tabs" id="detailTabs"><div class="tab on" data-tab="summary">요약</div><div class="tab" data-tab="price">시세</div><div class="tab" data-tab="area">평형</div><div class="tab" data-tab="analysis">분석</div><div class="tab" data-tab="view">단지뷰</div></div><div class="panel" id="detailPanel"><div id="summaryPanel"><h3 class="title">단지 기본정보</h3><div class="facts" id="facts"><div class="fact"><b>-</b><span>세대수</span></div><div class="fact"><b>-</b><span>동수</span></div><div class="fact"><b>-</b><span>사용승인</span></div></div><div class="info-card" id="infoCard"><div class="help">단지 정보를 불러오는 중입니다.</div></div><button class="primary yellow map-detail-btn" onclick="openCurrentApartmentMap()">📍 네이버지도에서 보기</button></div><div id="pricePanel" style="display:none"><h3 class="title">매매 실거래가</h3><div class="help" id="tradeStatus">시세 탭을 누르면 최근 실거래가를 불러옵니다.</div><div id="tradeSummary"></div><div id="tradeList"></div></div><div id="comingPanel" style="display:none"><div class="info-card"><b id="comingTitle">준비 중</b><div class="help" style="margin-top:8px">다음 버전에서 실제 데이터를 연결할 예정입니다.</div></div></div></div></section>
+<section class="map-screen" id="mapScreen"><div class="map-head"><div><h2>지도</h2><div class="help" id="mapSubtitle">내 위치를 확인해보세요</div></div><button class="close" onclick="goHome()">×</button></div><div class="map-wrap"><div id="naverMap" class="map-canvas"></div><div class="map-message" id="mapMessage"><b>네이버지도</b><span>하단의 ◎ 버튼을 눌러 현재 위치를 확인하세요.</span></div><button class="map-location-btn" onclick="locateMe()" aria-label="현재 위치">◎</button></div></section>
+<nav class="nav" id="bottomNav"><div class="active" data-nav="home" onclick="goHome()"><b>⌂</b>홈</div><div data-nav="map" onclick="openMapCurrent()"><b>⌖</b>지도</div><div data-nav="analysis" onclick="toast('분석 기능은 다음 버전에서 준비할게요')"><b>▥</b>분석</div><div data-nav="watch" onclick="toast('관심 기능은 다음 버전에서 준비할게요')"><b>☆</b>관심</div></nav>
+<div class="modal" id="settingsModal"><div class="sheet"><div class="sheet-head"><h2>실제 데이터 연결</h2><button class="close" onclick="closeSettings()">×</button></div><div class="help">공공데이터포털에서 발급받은 <b>Decoding 인증키</b>를 넣어주세요. V0.7.3은 기본정보와 매매 실거래가 API를 사용합니다. 저장된 키가 Encoding 형식이어도 자동 보정합니다.</div><div class="field"><label>1. API 인증키 (Decoding)</label><input type="password" id="keyInput" autocomplete="off" placeholder="인증키를 붙여넣으세요"></div><div class="actions"><button class="primary yellow" onclick="saveKey()">인증키 저장</button><button class="primary outline" onclick="testApi()">연결 테스트</button></div><div style="height:1px;background:#eee;margin:18px 0"></div><div class="field"><label>2. 네이버지도 Client ID</label><input type="password" id="naverMapKeyInput" autocomplete="off" placeholder="NAVER Cloud Maps Client ID"><div class="help" style="margin-top:7px">Web Dynamic Map을 등록한 Client ID를 입력하세요. 테스트용으로 이 기기에만 저장합니다.</div></div><button class="primary outline" style="width:100%" onclick="saveNaverMapKey()">네이버지도 키 저장</button><div style="height:1px;background:#eee;margin:18px 0"></div><div class="field"><label>3. 전국 아파트 단지 DB 받기</label><div class="help" id="syncHelp">처음 한 번만 실행하면 됩니다. 단지 목록은 기기에 저장되고, 나중에 다시 동기화할 수 있어요.</div><div class="progress"><div class="bar" id="progressBar"></div></div><div class="help" id="progressText">아직 동기화하지 않았어요.</div></div><button class="primary yellow" style="width:100%" id="syncBtn" onclick="syncAllApartments()">전국 단지 DB 동기화</button><div class="actions"><button class="primary outline small" onclick="clearApartmentDb()">단지 DB 삭제</button><button class="primary outline small danger" onclick="clearKey()">인증키 삭제</button></div><p class="help" style="margin-top:16px">※ V0.7.3은 개인 테스트용 프로토타입이라 인증키를 브라우저 저장소에 보관합니다. 실제 서비스 출시 때는 인증키를 앱에 넣지 않고 서버에서 안전하게 관리해야 합니다.</p></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const LIST_URL='https://apis.data.go.kr/1613000/AptListService4/getTotalAptList4';
+const TRADE_URL='https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev';
+const BASIC_URLS=[
+'https://apis.data.go.kr/1613000/AptBasisInfoServiceV5/getAphusBassInfoV5'
+];
+const NAVER_MAP_KEY_STORAGE='aptlab_naver_map_client_id_v08';
+const KEY_STORAGE='aptlab_api_key_v041', DB_STORAGE='aptlab_apt_list_v041', UPDATED_STORAGE='aptlab_apt_updated_v041';
+let apartmentDb=[]; let syncing=false; const memStore={};
+function storeGet(k){try{return window.localStorage.getItem(k)}catch(e){return memStore[k]||null}}
+function storeSet(k,v){try{window.localStorage.setItem(k,v)}catch(e){memStore[k]=String(v)}}
+function storeRemove(k){try{window.localStorage.removeItem(k)}catch(e){delete memStore[k]}}
+const $=id=>document.getElementById(id);
+function norm(s){
+  let v=(s||'').toLowerCase().replace(/[\s\-_.·]/g,'');
+  // 아파트 브랜드 검색 별칭: 사용자가 익숙한 표기와 DB 표기를 하나의 형태로 통일
+  const aliases=[
+    [/이편한세상/g,'e편한세상'],[/이편한/g,'e편한'],
+    [/xi/g,'자이'],[/gs자이/g,'자이'],
+    [/ipark/g,'아이파크'],[/i파크/g,'아이파크'],
+    [/prugio/g,'푸르지오'],
+    [/thesharp/g,'더샵'],[/더샾/g,'더샵'],[/포스코더샵/g,'더샵'],
+    [/skview/g,'sk뷰'],
+    [/lottecastle/g,'롯데캐슬'],
+    [/hillstate/g,'힐스테이트'],
+    [/raemian/g,'래미안'],[/로얄/g,'로열'],[/royal/g,'로열'],[/city/g,'씨티']
+  ];
+  for(const [from,to] of aliases)v=v.replace(from,to);
+  return v;
+}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function apiKey(){return storeGet(KEY_STORAGE)||''}
+function loadLocal(){try{apartmentDb=JSON.parse(storeGet(DB_STORAGE)||'[]')}catch(e){apartmentDb=[]} updateStatus()}
+function updateStatus(){const st=$('apiStatus'), key=apiKey(), n=apartmentDb.length, updated=storeGet(UPDATED_STORAGE);st.className='status';if(syncing){st.classList.add('syncing');$('statusText').textContent='전국 단지 DB 동기화 중...'}else if(key&&n){st.classList.add('ready');$('statusText').textContent=`실제 DB 연결됨 · ${n.toLocaleString()}개 단지`}else if(key){$('statusText').textContent='인증키 저장됨 · 단지 DB 동기화 필요'}else{$('statusText').textContent='실제 아파트 DB 설정이 필요해요'}$('syncCount').textContent=`${n.toLocaleString()}개 단지`;$('syncHeadline').textContent=n?'전국 실제 아파트 검색 준비 완료':'전국 단지 DB를 받아주세요';$('syncUpdated').textContent=updated?`마지막 동기화: ${updated}`:'API 키는 이 기기의 브라우저에만 저장됩니다.';$('syncMainBtn').textContent=n?'DB 다시 동기화':'API 설정하기';}
+function openSettings(){const m=$('settingsModal');if(m)m.classList.add('show');try{$('keyInput').value=apiKey();$('naverMapKeyInput').value=storeGet(NAVER_MAP_KEY_STORAGE)||''}catch(e){};updateProgress(apartmentDb.length?100:0,apartmentDb.length?`${apartmentDb.length.toLocaleString()}개 단지가 저장되어 있어요.`:'아직 동기화하지 않았어요.')}
+function closeSettings(){$('settingsModal').classList.remove('show')}
+$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings()});
+function saveKey(){const k=$('keyInput').value.trim();if(!k){toast('인증키를 입력해주세요');return}storeSet(KEY_STORAGE,k);updateStatus();toast('인증키를 저장했어요')}
+function saveNaverMapKey(){const k=$('naverMapKeyInput').value.trim();if(!k){toast('네이버지도 Client ID를 입력해주세요');return}storeSet(NAVER_MAP_KEY_STORAGE,k);toast('네이버지도 키를 저장했어요');}
+function clearKey(){if(confirm('저장된 인증키를 삭제할까요?')){storeRemove(KEY_STORAGE);$('keyInput').value='';updateStatus();toast('인증키를 삭제했어요')}}
+function clearApartmentDb(){if(confirm('기기에 저장된 전국 단지 목록을 삭제할까요?')){storeRemove(DB_STORAGE);storeRemove(UPDATED_STORAGE);apartmentDb=[];updateProgress(0,'단지 DB를 삭제했어요.');updateStatus();toast('단지 DB를 삭제했어요')}}
+function keyForUrl(){const k=apiKey();return k}
+function decodedApiKey(){let k=apiKey().trim();try{if(/%[0-9A-Fa-f]{2}/.test(k))k=decodeURIComponent(k)}catch(e){}return k}
+function apiUrl(base,params){const q=new URLSearchParams();q.set('serviceKey',decodedApiKey());Object.entries(params||{}).forEach(([k,v])=>q.set(k,String(v)));return base+'?'+q.toString()}
+function xmlText(el,tag){const n=el?.getElementsByTagName(tag)?.[0];return n?n.textContent:''}
+function xmlToBasic(text){try{const doc=new DOMParser().parseFromString(text,'application/xml');if(doc.querySelector('parsererror'))return null;const header={resultCode:xmlText(doc,'resultCode'),resultMsg:xmlText(doc,'resultMsg')};const itemEl=doc.getElementsByTagName('item')[0];const item={};if(itemEl){for(const c of itemEl.children)item[c.tagName]=c.textContent}return {response:{header,body:itemEl?{item}:null}}}catch(e){return null}}
+async function fetchData(url){const res=await fetch(url,{headers:{'Accept':'application/json, application/xml, text/xml, */*'}});const text=await res.text();let parsed=null;try{parsed=JSON.parse(text)}catch(e){parsed=xmlToBasic(text)}let msg=parsed?.response?.header?.resultMsg||parsed?.header?.resultMsg||parsed?.resultMsg||'';if(!msg&&text){const m=text.match(/<returnAuthMsg>([^<]+)|<resultMsg>([^<]+)/i);msg=m?(m[1]||m[2]||''):''}if(!res.ok)throw new Error(`HTTP ${res.status}${msg?' · '+msg:''}`);if(parsed)return parsed;throw new Error('응답 형식을 해석할 수 없습니다');}
+const fetchJson=fetchData;
+function getBody(data){return data?.response?.body||data?.body||data}
+function getItems(data){const b=getBody(data);const x=b?.items; if(Array.isArray(x))return x;if(Array.isArray(x?.item))return x.item;if(x?.item)return [x.item];if(Array.isArray(b?.item))return b.item;return []}
+async function testApi(){if($('keyInput').value.trim()&&!apiKey())saveKey();const k=apiKey();if(!k){toast('먼저 인증키를 저장해주세요');return}try{toast('API 연결을 확인하고 있어요...');const u=apiUrl(LIST_URL,{pageNo:1,numOfRows:1});const d=await fetchJson(u);const b=getBody(d);const items=getItems(d);const header=d?.response?.header||d?.header||{};if(items.length||Number(b?.totalCount)>0||String(header?.resultCode||'')==='00'){toast('연결 성공! 실제 데이터가 확인됐어요 👍')}else{throw new Error(header?.resultMsg||'데이터가 비어 있습니다')}}catch(e){toast(`연결 실패: ${e.message}`)}}
+function updateProgress(p,msg){$('progressBar').style.width=Math.max(0,Math.min(100,p))+'%';$('progressText').textContent=msg}
+async function syncAllApartments(){if(syncing)return;if($('keyInput').value.trim()&&!apiKey())saveKey();const k=apiKey();if(!k){toast('먼저 인증키를 저장해주세요');return}syncing=true;$('syncBtn').disabled=true;updateStatus();let all=[];try{const pageSize=1000;let page=1,total=null,maxPages=200;while(page<=maxPages){updateProgress(total?Math.min(95,(all.length/total)*100):3, total?`${all.length.toLocaleString()} / ${total.toLocaleString()}개 받는 중...`:`${page}페이지를 받는 중...`);const u=apiUrl(LIST_URL,{pageNo:page,numOfRows:pageSize});const d=await fetchJson(u);const b=getBody(d);const items=getItems(d);const header=d?.response?.header||d?.header||{};if(String(header?.resultCode||'00')!=='00' && !items.length)throw new Error(header?.resultMsg||'API 오류');if(total===null)total=Number(b?.totalCount||0);if(!items.length)break;all.push(...items.map(x=>({kaptCode:x.kaptCode||x.KAPT_CODE||'',kaptName:x.kaptName||x.KAPT_NAME||'',bjdCode:x.bjdCode||'',as1:x.as1||'',as2:x.as2||'',as3:x.as3||'',as4:x.as4||''})).filter(x=>x.kaptCode&&x.kaptName));if(total&&all.length>=total)break;if(items.length<pageSize && (!total||all.length>=total))break;page++;await new Promise(r=>setTimeout(r,140));}
+const seen=new Set();all=all.filter(a=>!seen.has(a.kaptCode)&&seen.add(a.kaptCode));if(!all.length)throw new Error('받아온 단지가 없습니다');storeSet(DB_STORAGE,JSON.stringify(all));const now=new Date().toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});storeSet(UPDATED_STORAGE,now);apartmentDb=all;updateProgress(100,`${all.length.toLocaleString()}개 단지 동기화 완료!`);toast('전국 단지 DB 동기화 완료 🎉');setTimeout(closeSettings,700)}catch(e){updateProgress(0,`실패: ${e.message}`);toast(`동기화 실패: ${e.message}`)}finally{syncing=false;$('syncBtn').disabled=false;updateStatus()}}
+const input=$('searchInput'),results=$('searchResults'),form=$('searchForm');
+
+function compactSearchParts(q){
+  const raw=norm(q);
+  if(!raw)return [];
+  const brands=['e편한세상','푸르지오','자이','아이파크','더샵','sk뷰','롯데캐슬','힐스테이트','래미안','로열파크','로열파크씨티'];
+  const parts=[];
+  let rest=raw;
+  for(const b of brands){
+    const bn=norm(b);
+    if(rest.includes(bn)){
+      const pos=rest.indexOf(bn);
+      if(pos>0)parts.push(rest.slice(0,pos));
+      parts.push(bn);
+      rest=rest.slice(pos+bn.length);
+    }
+  }
+  if(rest)parts.push(rest);
+  return parts.filter(Boolean);
+}
+
+function searchTokens(q){
+  return String(q||'')
+    .toLowerCase()
+    .replace(/[\-_.·,/()]/g,' ')
+    .split(/\s+/)
+    .map(x=>norm(x))
+    .filter(Boolean);
+}
+function getMatches(q){
+  const n=norm(q);
+  if(!n||n.length<1)return[];
+  let tokens=searchTokens(q); const compact=compactSearchParts(q); if(tokens.length<=1 && compact.length>1)tokens=compact;
+
+  return apartmentDb.map(a=>{
+    const nameNorm=norm(a.kaptName);
+    const locNorm=norm(`${a.as1}${a.as2}${a.as3}${a.as4}`);
+    const combined=nameNorm+locNorm;
+
+    let matched=false;
+    let score=99;
+
+    if(nameNorm===n){matched=true;score=0;}
+    else if(nameNorm.startsWith(n)){matched=true;score=1;}
+    else if(nameNorm.includes(n)){matched=true;score=2;}
+    else if(locNorm.includes(n)){matched=true;score=4;}
+    else if(tokens.length && tokens.every(t=>combined.includes(t))){
+      matched=true;
+      score=3;
+    } else if(tokens.length>=2){
+      const hit=tokens.filter(t=>combined.includes(t)).length;
+      if(hit>=Math.max(2,tokens.length-1)){matched=true;score=5+(tokens.length-hit);}
+    } else {
+      // 띄어쓰기 없는 검색어도 순서대로 등장하면 후보로 인정
+      let qi=0;
+      for(let ci=0;ci<nameNorm.length && qi<n.length;ci++){
+        if(nameNorm[ci]===n[qi])qi++;
+      }
+      if(qi===n.length){matched=true;score=8;}
+    }
+
+    return matched?{a,score}:null;
+  }).filter(Boolean)
+    .sort((x,y)=>x.score-y.score||x.a.kaptName.localeCompare(y.a.kaptName,'ko'))
+    .slice(0,20)
+    .map(x=>x.a);
+}
+function renderResults(){const q=input.value.trim();if(!q){results.classList.remove('show');return}if(!apartmentDb.length){results.innerHTML='<div class="empty">아직 실제 단지 DB가 없어요.<br><button class="linkbtn" onclick="openSettings()">API 설정 · 전국 DB 받기</button></div>';results.classList.add('show');return}const m=getMatches(q);results.innerHTML=m.length?m.map(a=>`<div class="result-item" data-code="${esc(a.kaptCode)}"><div class="result-name">${esc(a.kaptName)}</div><div class="result-meta">${esc([a.as1,a.as2,a.as3,a.as4].filter(Boolean).join(' '))} · ${esc(a.kaptCode)}</div></div>`).join(''):'<div class="empty">검색 결과가 없습니다.<br>정확한 정식 단지명이 아니어도 괜찮아요. 예: 검암 로열파크 푸르지오, 이편한세상 수지, 자이</div>';results.classList.add('show');results.querySelectorAll('.result-item').forEach(el=>el.addEventListener('click',()=>openApartment(el.dataset.code)))}
+input.addEventListener('input',renderResults);input.addEventListener('focus',renderResults);form.addEventListener('submit',e=>{e.preventDefault();const m=getMatches(input.value);if(m.length)openApartment(m[0].kaptCode);else renderResults()});document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))results.classList.remove('show')});
+function value(o,...keys){for(const k of keys){const v=o?.[k];if(v!==undefined&&v!==null&&String(v).trim()!==''&&String(v)!=='null')return String(v)}return '-'}
+function formatDate(s){const v=String(s||'').replace(/\D/g,'');if(v.length===8)return `${v.slice(0,4)}.${v.slice(4,6)}.${v.slice(6,8)}`;return s||'-'}
+let currentApartmentCode=''; let currentApartment=null; let tradeLoadedCode='';
+async function requestBasicInfo(code){
+  const keyRaw=decodedApiKey();
+  const attempts=[];
+  for(const base of BASIC_URLS){
+    attempts.push(apiUrl(base,{kaptCode:code}));
+    attempts.push(`${base}?kaptCode=${encodeURIComponent(code)}&serviceKey=${encodeURIComponent(keyRaw)}`);
+    attempts.push(`${base}?kaptCode=${encodeURIComponent(code)}&ServiceKey=${encodeURIComponent(keyRaw)}`);
+  }
+  let lastErr=null;
+  for(const u of attempts){
+    try{
+      const d=await fetchData(u);
+      const header=d?.response?.header||d?.header||{};
+      const rc=String(header?.resultCode||'00');
+      if(rc!=='00') throw new Error(header?.resultMsg||`API 오류 ${rc}`);
+      let item=getItems(d)[0];
+      if(!item){const b=getBody(d);item=b?.item||b?.items||b}
+      if(item&&typeof item==='object'&&Object.keys(item).length)return item;
+      throw new Error('기본정보가 없습니다');
+    }catch(e){lastErr=e}
+  }
+  throw lastErr||new Error('기본정보 조회 실패');
+}
+async function retryBasicInfo(){if(currentApartmentCode)await openApartment(currentApartmentCode,true)}
+async function openApartment(code,retryOnly=false){
+  const a=apartmentDb.find(x=>x.kaptCode===code);if(!a)return;currentApartmentCode=code;currentApartment=a;tradeLoadedCode='';showDetailTab('summary');$('tradeStatus').textContent='시세 탭을 누르면 최근 실거래가를 불러옵니다.';$('tradeSummary').innerHTML='';$('tradeList').innerHTML='';
+  results.classList.remove('show');$('home').classList.add('hide');$('detail').classList.add('show');if(!retryOnly)window.scrollTo(0,0);
+  $('detailName').textContent=a.kaptName;$('detailLoc').textContent=[a.as1,a.as2,a.as3,a.as4].filter(Boolean).join(' ')||'주소 확인 중';$('detailCode').textContent=`단지코드 ${a.kaptCode}`;$('detailHeadline').textContent='기본정보 조회 중...';$('facts').innerHTML='<div class="fact"><b>...</b><span>세대수</span></div><div class="fact"><b>...</b><span>동수</span></div><div class="fact"><b>...</b><span>사용승인</span></div>';$('infoCard').innerHTML='<div class="help">국토교통부 기본정보 API를 불러오는 중입니다.</div>';
+  try{
+    if(!apiKey())throw new Error('API 인증키가 없습니다');
+    const item=await requestBasicInfo(code);renderBasic(a,item);
+  }catch(e){
+    $('detailHeadline').textContent='목록 정보만 표시 중';
+    const hint=String(e.message).includes('400')?'V0.6은 공공데이터포털에서 직접 확인한 V5 기본정보 API를 사용합니다. 같은 단지코드가 포털에서 200으로 조회되므로, 계속 실패하면 브라우저의 로컬 파일 호출 제한 여부를 확인해야 합니다.':'';
+    $('infoCard').innerHTML=`<div class="help"><b>기본정보 조회 실패: ${esc(e.message)}</b><br><br>${esc(hint)}<br><br><button class="primary yellow small" onclick="retryBasicInfo()">기본정보 다시 불러오기</button></div>`;
+  }
+}
+function renderBasic(a,o){const name=value(o,'kaptName','kaptname');const addr=value(o,'kaptAddr','doroJuso','doroJuso2');const households=value(o,'kaptdaCnt','kaptDaCnt','hoCnt');const dong=value(o,'kaptDongCnt','dongCnt');const used=formatDate(value(o,'kaptUsedate','kaptUseDate','useDate'));const heat=value(o,'codeHeatNm','heatNm');const sale=value(o,'codeSaleNm','saleNm');const area=value(o,'kaptTarea','totalArea');const company=value(o,'kaptAcompany','kaptBcompany','company');const tel=value(o,'kaptTel','tel');const fax=value(o,'kaptFax','fax');const zip=value(o,'kaptAddrZipCd','zipCode');$('detailName').textContent=name==='-'?a.kaptName:name;$('detailLoc').textContent=addr==='-'?[a.as1,a.as2,a.as3,a.as4].filter(Boolean).join(' '):addr;$('detailHeadline').textContent=households==='-'?'공공데이터 기본정보':`${households}세대 · ${heat==='-'?'난방정보 확인':heat}`;$('facts').innerHTML=`<div class="fact"><b>${esc(households==='-'?'-':households+'세대')}</b><span>세대수</span></div><div class="fact"><b>${esc(dong==='-'?'-':dong+'개동')}</b><span>동수</span></div><div class="fact"><b>${esc(used)}</b><span>사용승인</span></div><div class="fact"><b>${esc(heat)}</b><span>난방</span></div><div class="fact"><b>${esc(sale)}</b><span>분양형태</span></div><div class="fact"><b>${esc(area==='-'?'-':area+'㎡')}</b><span>연면적</span></div>`;const rows=[['도로명/주소',addr],['단지코드',a.kaptCode],['관리/시공사',company],['전화',tel],['팩스',fax],['우편번호',zip]];$('infoCard').innerHTML=rows.map(([l,v])=>`<div class="info-row"><span>${esc(l)}</span><b>${esc(v)}</b></div>`).join('')}
+
+function showDetailTab(name){
+  document.querySelectorAll('#detailTabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===name));
+  $('summaryPanel').style.display=name==='summary'?'block':'none';
+  $('pricePanel').style.display=name==='price'?'block':'none';
+  $('comingPanel').style.display=(name!=='summary'&&name!=='price')?'block':'none';
+  if(name==='price'){ loadTrades(); }
+  if(name!=='summary'&&name!=='price'){
+    const labels={area:'평형',analysis:'분석',view:'단지뷰'};
+    $('comingTitle').textContent=(labels[name]||'기능')+' 준비 중';
+  }
+}
+document.querySelectorAll('#detailTabs .tab').forEach(t=>t.addEventListener('click',()=>showDetailTab(t.dataset.tab)));
+
+function ymList(count=12){
+  const d=new Date(), out=[];
+  for(let i=0;i<count;i++){
+    const x=new Date(d.getFullYear(),d.getMonth()-i,1);
+    out.push(String(x.getFullYear())+String(x.getMonth()+1).padStart(2,'0'));
+  }
+  return out;
+}
+function lawdCode(a){
+  const raw=String(a?.bjdCode||'').replace(/\D/g,'');
+  if(raw.length>=5)return raw.slice(0,5);
+  const text=[a?.as1,a?.as2].filter(Boolean).join(' ');
+  if(text.includes('용인')&&text.includes('수지'))return '41465';
+  return '';
+}
+function parseTradeXml(text){
+  const doc=new DOMParser().parseFromString(text,'application/xml');
+  if(doc.querySelector('parsererror'))throw new Error('실거래가 XML 해석 실패');
+  const rc=xmlText(doc,'resultCode'), msg=xmlText(doc,'resultMsg');
+  if(rc && rc!=='000' && rc!=='00')throw new Error(msg||('API 오류 '+rc));
+  return [...doc.getElementsByTagName('item')].map(el=>{
+    const o={}; for(const c of el.children)o[c.tagName]=c.textContent.trim(); return o;
+  });
+}
+async function fetchTradeMonth(lawd,ym){
+  const u=apiUrl(TRADE_URL,{LAWD_CD:lawd,DEAL_YMD:ym,pageNo:1,numOfRows:1000});
+  const r=await fetch(u,{headers:{'Accept':'application/xml,text/xml,*/*'}});
+  const text=await r.text();
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return parseTradeXml(text);
+}
+function moneyText(v){
+  const n=Number(String(v||'').replace(/,/g,'').trim());
+  if(!n)return '-';
+  const eok=Math.floor(n/10000), man=n%10000;
+  return eok ? (eok+'억'+(man?(' '+man.toLocaleString()+'만'):'')+'원') : n.toLocaleString()+'만원';
+}
+function tradeDate(o){
+  const y=value(o,'dealYear'),m=value(o,'dealMonth'),d=value(o,'dealDay');
+  return `${y}.${String(m).padStart(2,'0')}.${String(d).padStart(2,'0')}`;
+}
+async function loadTrades(){
+  const a=currentApartment;if(!a||tradeLoadedCode===a.kaptCode)return;
+  if(!apiKey()){$('tradeStatus').textContent='API 인증키가 없습니다. 설정에서 인증키를 저장해주세요.';return}
+  const lawd=lawdCode(a);
+  if(!lawd){$('tradeStatus').textContent='이 단지의 법정동 코드를 확인할 수 없습니다.';return}
+  tradeLoadedCode=a.kaptCode;
+  $('tradeStatus').textContent='최근 12개월 실거래가를 불러오는 중...';
+  $('tradeSummary').innerHTML='';$('tradeList').innerHTML='';
+  try{
+    let all=[];
+    for(const ym of ymList(12)){
+      try{all.push(...await fetchTradeMonth(lawd,ym))}catch(e){}
+    }
+    const target=norm(a.kaptName);
+    let matched=all.filter(o=>norm(value(o,'aptNm'))===target);
+    if(!matched.length)matched=all.filter(o=>{
+      const n=norm(value(o,'aptNm')); return n.includes(target)||target.includes(n);
+    });
+    matched.sort((x,y)=>{
+      const ax=Number(value(x,'dealYear'))*10000+Number(value(x,'dealMonth'))*100+Number(value(x,'dealDay'));
+      const ay=Number(value(y,'dealYear'))*10000+Number(value(y,'dealMonth'))*100+Number(value(y,'dealDay'));
+      return ay-ax;
+    });
+    if(!matched.length){
+      $('tradeStatus').textContent=`최근 12개월 동안 '${a.kaptName}'과 일치하는 매매 실거래를 찾지 못했습니다.`;
+      tradeLoadedCode='';
+      return;
+    }
+    $('tradeStatus').textContent=`국토교통부 실거래가 · 최근 12개월 ${matched.length}건`;
+    const latest=matched[0];
+    $('tradeSummary').innerHTML=`<div class="trade-summary"><div class="help">최근 매매 실거래</div><div class="latest">${esc(moneyText(value(latest,'dealAmount')))}</div><div class="sub">${esc(tradeDate(latest))} · 전용 ${esc(value(latest,'excluUseAr'))}㎡ · ${esc(value(latest,'floor'))}층</div></div>`;
+    $('tradeList').innerHTML=matched.slice(0,30).map(o=>`<div class="trade-card"><div class="trade-top"><div class="trade-price">${esc(moneyText(value(o,'dealAmount')))}</div><div class="trade-date">${esc(tradeDate(o))}</div></div><div class="trade-meta"><span class="trade-badge">전용 ${esc(value(o,'excluUseAr'))}㎡</span><span class="trade-badge">${esc(value(o,'floor'))}층</span><br>${esc(value(o,'roadNm','umdNm'))}${value(o,'jibun')==='-'?'':' · '+esc(value(o,'jibun'))}</div></div>`).join('');
+  }catch(e){
+    tradeLoadedCode='';
+    $('tradeStatus').textContent='실거래가 조회 실패: '+e.message;
+  }
+}
+
+let naverMapInstance=null,naverMyMarker=null,naverAptMarker=null,naverSdkKey='';
+function setNavActive(name){document.querySelectorAll('#bottomNav [data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
+function loadNaverMaps(){return new Promise((resolve,reject)=>{const key=storeGet(NAVER_MAP_KEY_STORAGE)||'';if(!key){reject(new Error('설정에서 네이버지도 Client ID를 먼저 저장해주세요.'));return}if(window.naver?.maps){resolve();return}if(document.getElementById('naverMapsSdk')){const t=setInterval(()=>{if(window.naver?.maps){clearInterval(t);resolve()}},100);setTimeout(()=>{clearInterval(t);reject(new Error('네이버지도 로딩 시간이 초과됐어요.'))},8000);return}naverSdkKey=key;const sc=document.createElement('script');sc.id='naverMapsSdk';sc.src='https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='+encodeURIComponent(key)+'&submodules=geocoder';sc.onload=()=>resolve();sc.onerror=()=>reject(new Error('네이버지도 SDK를 불러오지 못했습니다. 키와 Web 서비스 URL을 확인해주세요.'));document.head.appendChild(sc)})}
+async function showMapScreen(){ $('home').classList.add('hide');$('detail').classList.remove('show');$('mapScreen').classList.add('show');setNavActive('map');await loadNaverMaps();if(!naverMapInstance)naverMapInstance=new naver.maps.Map('naverMap',{center:new naver.maps.LatLng(37.5665,126.9780),zoom:15});setTimeout(()=>naver.maps.Event.trigger(naverMapInstance,'resize'),50)}
+async function openMapCurrent(){try{await showMapScreen();$('mapSubtitle').textContent='현재 위치';$('mapMessage').innerHTML='<b>내 위치 찾기</b><span>위치 권한을 허용하면 현재 위치를 지도에 표시합니다.</span>';locateMe()}catch(e){$('home').classList.remove('hide');$('mapScreen').classList.remove('show');setNavActive('home');toast(e.message);openSettings()}}
+function locateMe(){if(!navigator.geolocation){toast('이 기기에서는 위치 기능을 사용할 수 없어요');return}if(!naverMapInstance){openMapCurrent();return}$('mapMessage').innerHTML='<b>현재 위치 확인 중...</b><span>잠시만 기다려주세요.</span>';navigator.geolocation.getCurrentPosition(pos=>{const pt=new naver.maps.LatLng(pos.coords.latitude,pos.coords.longitude);naverMapInstance.setCenter(pt);naverMapInstance.setZoom(17);if(naverMyMarker)naverMyMarker.setMap(null);naverMyMarker=new naver.maps.Marker({position:pt,map:naverMapInstance,title:'내 위치'});$('mapMessage').innerHTML='<b>현재 위치</b><span>GPS 기준 현재 위치입니다.</span>'},err=>{$('mapMessage').innerHTML='<b>위치를 확인하지 못했어요</b><span>브라우저의 위치 권한을 허용해주세요. HTTPS 또는 설치된 PWA 환경에서 더 안정적으로 동작합니다.</span>';toast('위치 권한을 확인해주세요')},{enableHighAccuracy:true,timeout:10000,maximumAge:30000})}
+async function openCurrentApartmentMap(){if(!currentApartment){toast('선택한 단지가 없습니다');return}const address=$('detailLoc').textContent.trim();const name=$('detailName').textContent.trim();try{await showMapScreen();$('mapSubtitle').textContent=name;$('mapMessage').innerHTML='<b>'+esc(name)+'</b><span>단지 위치를 찾고 있어요...</span>';naver.maps.Service.geocode({query:address},function(status,response){if(status!==naver.maps.Service.Status.OK||!response.v2?.addresses?.length){$('mapMessage').innerHTML='<b>'+esc(name)+'</b><span>주소로 지도 위치를 찾지 못했습니다.</span>';return}const a=response.v2.addresses[0],pt=new naver.maps.LatLng(Number(a.y),Number(a.x));naverMapInstance.setCenter(pt);naverMapInstance.setZoom(17);if(naverAptMarker)naverAptMarker.setMap(null);naverAptMarker=new naver.maps.Marker({position:pt,map:naverMapInstance,title:name});$('mapMessage').innerHTML='<b>'+esc(name)+'</b><span>'+esc(a.roadAddress||a.jibunAddress||address)+'</span>'})}catch(e){toast(e.message);openSettings()}}
+function goHome(){$('detail').classList.remove('show');$('mapScreen').classList.remove('show');$('home').classList.remove('hide');setNavActive('home');window.scrollTo(0,0)}
+loadLocal();
+if(!apiKey()||!apartmentDb.length)setTimeout(openSettings,350);
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+</script>
+</body></html>
